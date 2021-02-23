@@ -76,12 +76,12 @@ if __name__=='__main__':
     for city in snohomish_cities:
         for month in months:
             # Get info for each city and month
-            print(f"Getting {city} sales for {month[0]} to {month[1]}")
+            print(f"Getting {city} sales from {month[0]} to {month[1]}")
             
             try:
                 start = time.time()
-                r = requests.get(get_sales(city, month[0], month[1]))
-                soup = BeautifulSoup(r.content, "html")
+                r = requests.get(get_sales(city, month[0], month[1]), headers=headers)
+                soup = BeautifulSoup(r.content, "html.parser")
                 delay = time.time() - start
                 
                 # select the table
@@ -91,22 +91,25 @@ if __name__=='__main__':
                 print(e)
             
             # loop through entries on page
-            for row in rows[1:]:
-                new_row = empty_row.copy()
-                columns = row.find_all("td")
-                new_row['Parcel #'] = columns[1].a.text.strip()
-                new_row['Date of Sale'] = columns[2].text.strip()
-                new_row['Sale Price'] = columns[3].text.strip()
-                new_row['Lot Size'] = columns[4].text.strip()
-                new_row['Year Built'] = columns[5].text.strip()
-                new_row['Type'] = columns[6].text.strip()
-                new_row['Quality/Grade'] = columns[7].text.strip()
-                new_row['Sqft'] = columns[8].text.strip()
-                new_row['Address'] = columns[9].text.strip()
-                new_row['City'] = columns[10].text.strip()
-                new_row['Nbhd'] = columns[11].text.strip()
-                new_row['Use Code'] = columns[12].text.strip()
-                all_rows.append(new_row)
+            if rows:
+                for row in rows[1:]:
+                    new_row = empty_row.copy()
+                    columns = row.find_all("td")
+                    new_row['Parcel #'] = columns[1].a.text.strip()
+                    new_row['Date of Sale'] = columns[2].text.strip()
+                    new_row['Sale Price'] = columns[3].text.strip()
+                    new_row['Lot Size'] = columns[4].text.strip()
+                    new_row['Year Built'] = columns[5].text.strip()
+                    new_row['Type'] = columns[6].text.strip()
+                    new_row['Quality/Grade'] = columns[7].text.strip()
+                    new_row['Sqft'] = columns[8].text.strip()
+                    new_row['Address'] = columns[9].text.strip()
+                    new_row['City'] = columns[10].text.strip()
+                    new_row['Nbhd'] = columns[11].text.strip()
+                    new_row['Use Code'] = columns[12].text.strip()
+                    all_rows.append(new_row)
+            else:
+                print("No results for {city} from {month[0]} to {month[1]}")
             
             # timer between request
             time.sleep(random.uniform(2, 4) * delay)
