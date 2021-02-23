@@ -11,27 +11,6 @@ import time
 from datetime import date 
 from bs4 import BeautifulSoup
 
-snohomish_cities = [
-    'Arlington', 
-    'Bothell',
-    'Brier',
-    'Darrington',
-    'Edmonds',
-    'Everett',
-    'Gold Bar',
-    'Granite Falls',
-    'Index',
-    'Lake Stevens',
-    'Lynnwood',
-    'Marysville',
-    'Mill Creek',
-    'Monroe',
-    'Mountlake Terrace',
-    'Mukilteo',
-    'Snohomish',
-    'Stanwood',
-    'Sultan',
-    'Woodway']
 
 
 def get_sales(city, start_date, end_date):
@@ -48,6 +27,28 @@ def get_sales(city, start_date, end_date):
 
 if __name__=='__main__':
     # client = MongoClient('localhost', 27017)
+    snohomish_cities = [
+        'Arlington', 
+        'Bothell',
+        'Brier',
+        'Darrington',
+        'Edmonds',
+        'Everett',
+        'Gold Bar',
+        'Granite Falls',
+        'Index',
+        'Lake Stevens',
+        'Lynnwood',
+        'Marysville',
+        'Mill Creek',
+        'Monroe',
+        'Mountlake Terrace',
+        'Mukilteo',
+        'Snohomish',
+        'Stanwood',
+        'Sultan',
+        'Woodway']
+
     empty_row = {
         "Parcel #": None, 
         "Date of Sale": None, 
@@ -65,7 +66,7 @@ if __name__=='__main__':
     # Create months
     from pandas.tseries.offsets import MonthEnd
     months = []
-    for beg in pd.date_range('2020-01-01', '2020-12-1', freq='MS'):
+    for beg in pd.date_range('2020-04-01', '2020-12-1', freq='MS'):
         months.append((
             date.fromisoformat( beg.strftime("%Y-%m-%d") ), 
             date.fromisoformat( (beg + MonthEnd(1)).strftime("%Y-%m-%d")) ))
@@ -73,14 +74,15 @@ if __name__=='__main__':
 
     headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0", "Accept-Encoding":"gzip, deflate", "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "DNT":"1","Connection":"close", "Upgrade-Insecure-Requests":"1"}
     all_rows = []
-    for city in snohomish_cities:
-        for month in months:
+    failed = 0
+    for month in months:
+        for city in snohomish_cities:
             # Get info for each city and month
             print(f"Getting {city} sales from {month[0]} to {month[1]}")
-            
+            rows=[]
             try:
                 start = time.time()
-                r = requests.get(get_sales(city, month[0], month[1]), headers=headers)
+                r = requests.get(get_sales(city, month[0], month[1]))
                 soup = BeautifulSoup(r.content, "html.parser")
                 delay = time.time() - start
                 
@@ -92,6 +94,7 @@ if __name__=='__main__':
             
             # loop through entries on page
             if rows:
+                failed = 0
                 for row in rows[1:]:
                     new_row = empty_row.copy()
                     columns = row.find_all("td")
@@ -109,10 +112,17 @@ if __name__=='__main__':
                     new_row['Use Code'] = columns[12].text.strip()
                     all_rows.append(new_row)
             else:
-                print("No results for {city} from {month[0]} to {month[1]}")
+                failed += 1
+                print(f"No results for {city} from {month[0]} to {month[1]}")
+            if failed > 3:
+                break
             
             # timer between request
-            time.sleep(random.uniform(2, 4) * delay)
+            wait = random.uniform(5,30) + random.uniform(1, 2) * delay
+            print("Waiting {:.2f} seconds".format(wait))
+            time.sleep(wait)
+        if failed > 3:
+            break
     
     pd.DataFrame(all_rows).to_csv('sales.csv')
 
