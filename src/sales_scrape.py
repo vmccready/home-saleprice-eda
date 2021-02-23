@@ -1,6 +1,6 @@
 
 # Connect to Database
-# from pymongo import MongoClient
+from pymongo import MongoClient
 
 # Requests sends and recieves HTTP requests.
 import requests
@@ -20,13 +20,15 @@ def get_sales(city, start_date, end_date):
     # start_date: date
     sale_search_url = 'http://www.snoco.org/app4/sas/assessor/services/salessearch2.aspx?TextBox1={city}&TextBox12=&DropDownList3=&DropDownList1=&DropDownList2=&TextBox2=&TextBox3=&TextBox4=&TextBox5=&TextBox8=&TextBox9=&TextBox10={s_m}%2F{s_d}%2F{s_y}&TextBox11={e_m}%2F{e_d}%2F{e_y}'
     search_term = sale_search_url.format(
-        city='Arlington', 
+        city=city, 
         s_m=start_date.month, s_d=start_date.day, s_y=start_date.year,
         e_m=end_date.month, e_d=end_date.day, e_y=end_date.year)
     return search_term
 
 if __name__=='__main__':
-    # client = MongoClient('localhost', 27017)
+    client = MongoClient('localhost', 27017)
+    db = client['homesales_snohomish']
+    homesales = db.homesales
     snohomish_cities = [
         'Arlington', 
         'Bothell',
@@ -34,20 +36,21 @@ if __name__=='__main__':
         'Darrington',
         'Edmonds',
         'Everett',
-        'Gold Bar',
-        'Granite Falls',
+        'Gold+Bar',
+        'Granite+Falls',
         'Index',
-        'Lake Stevens',
+        'Lake+Stevens',
         'Lynnwood',
         'Marysville',
-        'Mill Creek',
+        'Mill+Creek',
         'Monroe',
-        'Mountlake Terrace',
+        'Mountlake+Terrace',
         'Mukilteo',
         'Snohomish',
         'Stanwood',
         'Sultan',
         'Woodway']
+
 
     empty_row = {
         "Parcel #": None, 
@@ -57,7 +60,7 @@ if __name__=='__main__':
         "Year Built": None,
         "Type": None,
         "Quality/Grade": None,
-        "Sq.ft.": None,
+        "Sqft": None,
         "Address": None,
         "City": None,
         "Nbhd": None,
@@ -66,12 +69,11 @@ if __name__=='__main__':
     # Create months
     from pandas.tseries.offsets import MonthEnd
     months = []
-    for beg in pd.date_range('2020-04-01', '2020-12-1', freq='MS'):
+    for beg in pd.date_range('2020-02-01', '2020-12-31', freq='MS'):
         months.append((
             date.fromisoformat( beg.strftime("%Y-%m-%d") ), 
             date.fromisoformat( (beg + MonthEnd(1)).strftime("%Y-%m-%d")) ))
     
-
     headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0", "Accept-Encoding":"gzip, deflate", "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "DNT":"1","Connection":"close", "Upgrade-Insecure-Requests":"1"}
     all_rows = []
     failed = 0
@@ -110,6 +112,7 @@ if __name__=='__main__':
                     new_row['City'] = columns[10].text.strip()
                     new_row['Nbhd'] = columns[11].text.strip()
                     new_row['Use Code'] = columns[12].text.strip()
+                    homesales.insert_one(new_row)
                     all_rows.append(new_row)
             else:
                 failed += 1
@@ -118,7 +121,7 @@ if __name__=='__main__':
                 break
             
             # timer between request
-            wait = random.uniform(5,30) + random.uniform(1, 2) * delay
+            wait = random.uniform(10,20) + random.uniform(1, 2) * delay
             print("Waiting {:.2f} seconds".format(wait))
             time.sleep(wait)
         if failed > 3:
