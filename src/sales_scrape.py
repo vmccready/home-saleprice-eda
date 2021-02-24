@@ -30,18 +30,18 @@ if __name__=='__main__':
     db = client['homesales_snohomish']
     homesales = db.homesales
     snohomish_cities = [
-        'Arlington', 
-        'Bothell',
-        'Brier',
-        'Darrington',
-        'Edmonds',
-        'Everett',
-        'Gold+Bar',
-        'Granite+Falls',
-        'Index',
-        'Lake+Stevens',
-        'Lynnwood',
-        'Marysville',
+        # 'Arlington', 
+        # 'Bothell',
+        # 'Brier',
+        # 'Darrington',
+        # 'Edmonds',
+        # 'Everett',
+        # 'Gold+Bar',
+        # 'Granite+Falls',
+        # 'Index',
+        # 'Lake+Stevens',
+        # 'Lynnwood',
+        # 'Marysville',
         'Mill+Creek',
         'Monroe',
         'Mountlake+Terrace',
@@ -69,7 +69,7 @@ if __name__=='__main__':
     # Create months
     from pandas.tseries.offsets import MonthEnd
     months = []
-    for beg in pd.date_range('2020-02-01', '2020-12-31', freq='MS'):
+    for beg in pd.date_range('2020-10-01', '2020-10-30', freq='MS'):
         months.append((
             date.fromisoformat( beg.strftime("%Y-%m-%d") ), 
             date.fromisoformat( (beg + MonthEnd(1)).strftime("%Y-%m-%d")) ))
@@ -80,52 +80,53 @@ if __name__=='__main__':
     for month in months:
         for city in snohomish_cities:
             # Get info for each city and month
-            print(f"Getting {city} sales from {month[0]} to {month[1]}")
             rows=[]
-            try:
-                start = time.time()
-                r = requests.get(get_sales(city, month[0], month[1]))
-                soup = BeautifulSoup(r.content, "html.parser")
-                delay = time.time() - start
+            while not rows:
+                print(f"Getting {city} sales from {month[0]} to {month[1]}")
+                try:
+                    start = time.time()
+                    r = requests.get(get_sales(city, month[0], month[1]))
+                    soup = BeautifulSoup(r.content, "html.parser")
+                    delay = time.time() - start
+                    
+                    # select the table
+                    table = soup.find("table", {"id": "GridView1"})
+                    rows = table.find_all("tr", recursive=False)
+                except Exception as e:
+                    print(e)
                 
-                # select the table
-                table = soup.find("table", {"id": "GridView1"})
-                rows = table.find_all("tr", recursive=False)
-            except Exception as e:
-                print(e)
-            
-            # loop through entries on page
-            if rows:
-                failed = 0
-                for row in rows[1:]:
-                    new_row = empty_row.copy()
-                    columns = row.find_all("td")
-                    new_row['Parcel #'] = columns[1].a.text.strip()
-                    new_row['Date of Sale'] = columns[2].text.strip()
-                    new_row['Sale Price'] = columns[3].text.strip()
-                    new_row['Lot Size'] = columns[4].text.strip()
-                    new_row['Year Built'] = columns[5].text.strip()
-                    new_row['Type'] = columns[6].text.strip()
-                    new_row['Quality/Grade'] = columns[7].text.strip()
-                    new_row['Sqft'] = columns[8].text.strip()
-                    new_row['Address'] = columns[9].text.strip()
-                    new_row['City'] = columns[10].text.strip()
-                    new_row['Nbhd'] = columns[11].text.strip()
-                    new_row['Use Code'] = columns[12].text.strip()
-                    homesales.insert_one(new_row)
-                    all_rows.append(new_row)
-            else:
-                failed += 1
-                print(f"No results for {city} from {month[0]} to {month[1]}")
-            if failed > 3:
-                break
+                # loop through entries on page
+                if rows:
+                    failed = 0
+                    for row in rows[1:]:
+                        new_row = empty_row.copy()
+                        columns = row.find_all("td")
+                        new_row['Parcel #'] = columns[1].a.text.strip()
+                        new_row['Date of Sale'] = columns[2].text.strip()
+                        new_row['Sale Price'] = columns[3].text.strip()
+                        new_row['Lot Size'] = columns[4].text.strip()
+                        new_row['Year Built'] = columns[5].text.strip()
+                        new_row['Type'] = columns[6].text.strip()
+                        new_row['Quality/Grade'] = columns[7].text.strip()
+                        new_row['Sqft'] = columns[8].text.strip()
+                        new_row['Address'] = columns[9].text.strip()
+                        new_row['City'] = columns[10].text.strip()
+                        new_row['Nbhd'] = columns[11].text.strip()
+                        new_row['Use Code'] = columns[12].text.strip()
+                        homesales.insert_one(new_row)
+                        all_rows.append(new_row)
+                else:
+                    print(f"No results for {city} from {month[0]} to {month[1]}, waiting 5 min")
+                    time.sleep(600)
+            # if failed > 3:
+            #     break
             
             # timer between request
-            wait = random.uniform(10,20) + random.uniform(1, 2) * delay
+            wait = random.uniform(1,5) + random.uniform(1, 2) * delay
             print("Waiting {:.2f} seconds".format(wait))
             time.sleep(wait)
-        if failed > 3:
-            break
+        # if failed > 2:
+        #     break
     
     pd.DataFrame(all_rows).to_csv('sales.csv')
 
