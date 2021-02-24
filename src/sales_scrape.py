@@ -30,18 +30,18 @@ if __name__=='__main__':
     db = client['homesales_snohomish']
     homesales = db.homesales
     snohomish_cities = [
-        # 'Arlington', 
-        # 'Bothell',
-        # 'Brier',
-        # 'Darrington',
-        # 'Edmonds',
-        # 'Everett',
-        # 'Gold+Bar',
-        # 'Granite+Falls',
-        # 'Index',
-        # 'Lake+Stevens',
-        # 'Lynnwood',
-        # 'Marysville',
+        'Arlington', 
+        'Bothell',
+        'Brier',
+        'Darrington',
+        'Edmonds',
+        'Everett',
+        'Gold+Bar',
+        'Granite+Falls',
+        'Index',
+        'Lake+Stevens',
+        'Lynnwood',
+        'Marysville',
         'Mill+Creek',
         'Monroe',
         'Mountlake+Terrace',
@@ -69,7 +69,7 @@ if __name__=='__main__':
     # Create months
     from pandas.tseries.offsets import MonthEnd
     months = []
-    for beg in pd.date_range('2020-10-01', '2020-10-30', freq='MS'):
+    for beg in pd.date_range('2021-1-01', '2021-2-23', freq='MS'):
         months.append((
             date.fromisoformat( beg.strftime("%Y-%m-%d") ), 
             date.fromisoformat( (beg + MonthEnd(1)).strftime("%Y-%m-%d")) ))
