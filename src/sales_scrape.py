@@ -69,15 +69,15 @@ if __name__=='__main__':
     # Create months
     from pandas.tseries.offsets import MonthEnd
     months = []
-    for beg in pd.date_range('2021-1-01', '2021-2-23', freq='MS'):
+    for beg in pd.date_range('2017-1-01', '2019-12-31', freq='MS'):
         months.append((
             date.fromisoformat( beg.strftime("%Y-%m-%d") ), 
             date.fromisoformat( (beg + MonthEnd(1)).strftime("%Y-%m-%d")) ))
     
     headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0", "Accept-Encoding":"gzip, deflate", "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "DNT":"1","Connection":"close", "Upgrade-Insecure-Requests":"1"}
     all_rows = []
-    failed = 0
-    for month in months:
+    # failed = 0
+    for month in months[::-1]:
         for city in snohomish_cities:
             # Get info for each city and month
             rows=[]
