@@ -1,5 +1,9 @@
 # Snohomish County Housing Market Analysis
 Exploratory Data Analysis of Home Sales in Seattle Area
+
+Home prices in the Greater Seattle Area have been rapidly increasing for over a decade. This continued increase in price has made the area a prime location for investment, but also a barrier to those looking to buy their first home.
+
+As a current resident I hope to gain some insight in this market as a potential owner and investor. Using publicly available information of home sales, I hope to explore factors that influence price or correlate with price and value. 
 ```
        _
      _|=|__________
