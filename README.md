@@ -3,7 +3,7 @@ Exploratory Data Analysis of Home Sales in Seattle Area
 
 Home prices in the Greater Seattle Area have been rapidly increasing for over a decade. This continued increase in price has made the area a prime location for investment, but also a barrier to those looking to buy their first home.
 
-As a current resident I hope to gain some insight in this market as a potential owner and investor. What influences the value of a home? Using publicly available information of home sales I hope to explore factors that influence price or correlate with price and value. 
+As a current resident I hope to gain some insight in this market as a potential owner and investor. What influences the value of a home? Using publicly available information of home sales I hope to explore factors that influence price or correlate with price and value. These correlations could be valuable to validate potential returns on investment. 
 
 ![](img/fredgraph.png)
 
@@ -40,7 +40,33 @@ I would like to do see if there is a significant difference in value based on th
 
 Now I know the distributions are normal I can determine if the difference is significant. I would like to be 90% confident before rejecting any null hypothesis After comparing the data for different use codes I found that I could not reject the following hypotheses:
 1. Single Family Residences - Detached are drawn from the same distribution as Common Wall Single Family Residences.
-2. Single Family Residences - Detached are drawn from the same distribution as Single Family Residence Condominium Detached. 
-The 1st case above had a p-value of 0.20 and the 2nd had a p-value of 0.102. Though the p-value was close to my rejection threshold, I did not have enough evidence to reject my hypothesis in general. Looking at specific date ranges may yield different results if I were to do additional exploration. 
+2. Single Family Residences - Detached are drawn from the same distribution as Single Family Residence Condominium Detached.  
+
+The 1st case above had a p-value of 0.20 and the 2nd had a p-value of 0.102. Though the p-value was close to my rejection threshold, I did not have enough evidence to reject my hypothesis in general. Looking at specific date ranges may yield different results if I were to do additional exploration. But when purchasing a home in general, one should consider the mean price per square foot for the given use code and that they are generally different distributions. 
+
+|   Use Code |   price/sqft |
+|-----------:|-------------:|
+| Single Family Residence-Detahced |      246.758 |
+| Common Wall Single Family Residence |      249.633 |
+| Manufactured Home (Owned Site) |      193.544 |
+| Condominium Detached |      244.02  |
+| Condominium Common Wall |      232.178 |
+| Condo converted from Apartments |      267.178 |
+
+#### Types
+
+Homes are also categorized by types. This factor may also be influencing home values. We can see the mean of price per square feet by type below:
+
+![](img/price_sqft_sfr_hists.png)
+
+I will take the null hypothesis that there is no difference in price per square foot between different types of home. Following a similar process as used in use codes; I determined that the distributions of price per square feet by type were normal as well. I want to be 90% confident that the distributions are different and found that the difference in value between types were significant in all but the following:
+1. 1 1/2 Sty and 2+ Sty: P value of 0.8917
+2. 1 Sty B and 2 Sty B: P value of 0.4035
+
+Failing to reject these types are distributed differently brings up some more questions. Are these being valued similarly, or is this giving some insight into a distribution of value based on how many stories there are?
+
+![](img/p_sq_type_nob.png)
+
+With the given evidence the only conclusion I would make at the moment is that 2 story homes are different from the others and has the best value in terms of price per square feet. 
 
 
