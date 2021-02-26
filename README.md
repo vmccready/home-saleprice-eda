@@ -24,7 +24,7 @@ One of our primary columns to observe is price. However it may be difficult to d
 
 ### Narrowing to Single Family Residences
 #### Use codes
-The data we would like to observe specifically are values for single family residences. This is the most available home type and the lowest cost of entry for both investors and people looking for a place to live. Use Codes distinguish the different types of homes. T
+The data we would like to observe specifically are values for single family residences. This is the most available home type and the lowest cost of entry for both investors and people looking for a place to live. Use Codes distinguish the different types of homes. For my purposes, I will be narrowing the data to the codes for single family residences. These are the most common and are most easily used as a primary residence but can also be used as investment properties. 
 
 ![](img/use_code_counts.png)
 
