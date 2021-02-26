@@ -6,6 +6,13 @@ Home prices in the Greater Seattle Area have been rapidly increasing for over a 
 As a current resident I hope to gain some insight in this market as a potential owner and investor. What influences the value of a home? Using publicly available information of home sales I hope to explore factors that influence price or correlate with price and value. These correlations could be valuable to validate potential returns on investment. 
 
 ![](img/fredgraph.png)
+# Table of Contents
+1. [Data](#Data)
+2. [Exploratory Analysis](#Exploratory-Data-Analysis)
+3. [Use Codes](#Use-codes)
+4. [Types](#Types)
+5. [Quality/Grade](#Quality/Grade)
+6. [Conclusion](#Conclusion)
 
 ## Data
 Snohomish County provides data for home sales through a web search [available here.](http://www.snoco.org/app4/sas/assessor/services/salessearch.aspx) The data available from this search is shown below in the first row. As we can see some values could be missing, but certain columns always had values including: parcel, date of sale, sale price, and use code. The county also provides parcel information in a separate search, but the information in the sale query has the primary columns I would like to explore. The information was scraped from the web with multiple queries since each individual search result had a max return value of 800 results. Data was stored in a Mongo Database as strings and were cleaned through a data pipeline into the useable types shown in the second row. 
