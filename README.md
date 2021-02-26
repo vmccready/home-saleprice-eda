@@ -69,4 +69,25 @@ Failing to reject these types are distributed differently brings up some more qu
 
 With the given evidence the only conclusion I would make at the moment is that 2 story homes are different from the others and has the best value in terms of price per square feet. 
 
+#### Quality/Grade
+
+I would expect that Quality/Grade of a home would directly influence the price and value of a home. Qualities of homes are determined by assessors and are supposed to follow a normal distribution. Looking below this mostly seems to be the case. 
+
+![](img/quality_hist.png)
+
+I again adopt the null hypotheses that there is no difference in distribution between qualities. However I only have 26 points for the Sub Standard quality and 44 points for the Excellent quality for the tested data. After performting t-tests between the qualities, I could reject all except:
+1. Low and Excellent: P value of 0.2697
+2. Fair and V Good: P value of 0.5539
+3. Avg+ and Good: P value of 0.1278
+
+Failing to reject that a Low and Excellent quality are drawing from the same distribution may be pointing towards the relationship between price per square foot and quality. Looking at the relationship below shows that a quality of Fair or below would be a poor investment. 
+
+![](img/mean_price_quality.png)
+
+### Conclusions
+
+When looking at a home to buy, considering price per square foot allows one to have more living space per dollar spent or more return on dollar spent for an investor (rent price is directly influenced by square feet of living space). When condsidering a home to buy, I cannot confidently say that a detached single family residence is any different from a common wall single family residence or a detached condominium. When considering how many floors, the lowest price per square foot is in a 2 story home. And though quality may show that a home is worth a higher price per square foot, buying Fair or below is probably a bad deal and there is no difference between Avg+ and Good. 
+
+Additional analysis can be done for more specific square foot ranges, especially for those in demand by renters. Additional exploration in those ranges and for earnings per square foot for rental properties would show return on investment for those properties. 
+
 
