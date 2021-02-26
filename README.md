@@ -23,8 +23,8 @@ One of our primary columns to observe is price. However it may be difficult to d
 ![](img/mean_price_time.png)
 
 ### Narrowing to Single Family Residences
-
-The data we would like to observe specifically are values for single family residences. This is the most available home type and the lowest cost of entry for both investors and people looking for a place to live. Use Codes distinguish the different types of homes. 
+#### Use codes
+The data we would like to observe specifically are values for single family residences. This is the most available home type and the lowest cost of entry for both investors and people looking for a place to live. Use Codes distinguish the different types of homes. T
 
 ![](img/use_code_counts.png)
 
@@ -34,5 +34,13 @@ Another assumption I will make is that a larger home has a higher price as we ca
 
 ![](img/price_sqft_sfr.png)
 
+I would like to do see if there is a significant difference in value based on the different use codes. To do so I will use a t-test and test against my null hypotheses that there is no significant difference in price per square foot between the different use codes. Before testing I will confirm that the distributions of the price per square feet are normal. 
+
+![](img/price_sqft_sfr_hists.png)
+
+Now I know the distributions are normal I can determine if the difference is significant. I would like to be 90% confident before rejecting any null hypothesis After comparing the data for different use codes I found that I could not reject the following hypotheses:
+1. Single Family Residences - Detached are drawn from the same distribution as Common Wall Single Family Residences.
+2. Single Family Residences - Detached are drawn from the same distribution as Single Family Residence Condominium Detached. 
+The 1st case above had a p-value of 0.20 and the 2nd had a p-value of 0.102. Though the p-value was close to my rejection threshold, I did not have enough evidence to reject my hypothesis in general. Looking at specific date ranges may yield different results if I were to do additional exploration. 
 
 
