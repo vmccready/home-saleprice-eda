@@ -26,9 +26,11 @@ def get_sales(city, start_date, end_date):
     return search_term
 
 if __name__=='__main__':
+    # Connect to database
     client = MongoClient('localhost', 27017)
     db = client['homesales_snohomish']
     homesales = db.homesales
+
     snohomish_cities = [
         'Arlington', 
         'Bothell',
@@ -50,7 +52,6 @@ if __name__=='__main__':
         'Stanwood',
         'Sultan',
         'Woodway']
-
 
     empty_row = {
         "Parcel #": None, 
@@ -74,28 +75,29 @@ if __name__=='__main__':
             date.fromisoformat( beg.strftime("%Y-%m-%d") ), 
             date.fromisoformat( (beg + MonthEnd(1)).strftime("%Y-%m-%d")) ))
     
-    headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0", "Accept-Encoding":"gzip, deflate", "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "DNT":"1","Connection":"close", "Upgrade-Insecure-Requests":"1"}
-    all_rows = []
-    # failed = 0
+    # headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0", "Accept-Encoding":"gzip, deflate", "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", "DNT":"1","Connection":"close", "Upgrade-Insecure-Requests":"1"}
+    all_rows = [] #collect rows for backup save to csv
+
     for month in months[::-1]:
         for city in snohomish_cities:
             # Get info for each city and month
             rows=[]
+
+            # Use while loop so file does not have to be rerun after failed query
             while not rows:
                 print(f"Getting {city} sales from {month[0]} to {month[1]}")
                 try:
-                    start = time.time()
+                    start = time.time() # timer used for delay between queries
                     r = requests.get(get_sales(city, month[0], month[1]))
                     soup = BeautifulSoup(r.content, "html.parser")
                     delay = time.time() - start
                     
-                    # select the table
                     table = soup.find("table", {"id": "GridView1"})
                     rows = table.find_all("tr", recursive=False)
                 except Exception as e:
                     print(e)
                 
-                # loop through entries on page
+                # loop through rows and insert in to db
                 if rows:
                     failed = 0
                     for row in rows[1:]:
@@ -117,17 +119,15 @@ if __name__=='__main__':
                         all_rows.append(new_row)
                 else:
                     print(f"No results for {city} from {month[0]} to {month[1]}, waiting 5 min")
-                    time.sleep(600)
-            # if failed > 3:
-            #     break
+                    time.sleep(600) # wait 5 minutes for server to restart if no result returned
+
             
             # timer between request
             wait = random.uniform(1,5) + random.uniform(1, 2) * delay
             print("Waiting {:.2f} seconds".format(wait))
             time.sleep(wait)
-        # if failed > 2:
-        #     break
-    
+
+    # backup save to csv
     pd.DataFrame(all_rows).to_csv('sales.csv')
 
 
