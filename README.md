@@ -57,7 +57,7 @@ The 1st case above had a p-value of 0.20 and the 2nd had a p-value of 0.102. Tho
 
 Homes are also categorized by types. This factor may also be influencing home values. We can see the mean of price per square feet by type below:
 
-![](img/price_sqft_sfr_hists.png)
+![](img/mean_p_sqft_type.png)
 
 I will take the null hypothesis that there is no difference in price per square foot between different types of home. Following a similar process as used in use codes; I determined that the distributions of price per square feet by type were normal as well. I want to be 90% confident that the distributions are different and found that the difference in value between types were significant in all but the following:
 1. 1 1/2 Sty and 2+ Sty: P value of 0.8917
